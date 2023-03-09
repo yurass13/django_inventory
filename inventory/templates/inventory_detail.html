@@ -1,0 +1,22 @@
+{% extends 'bases/base.html' %}
+{% block title%}{{title}}{% endblock title%}
+{% block header%}{{title}}{% endblock header%}
+{% block content  %}
+    <table class='table_view truncated'>
+        <tr>
+            <th>Inventory ID</th><td>{{item.id}}</td>
+        </tr>
+        <tr>
+            <th>Product name</th><td>{{item.product_prototype}}</td>
+        </tr>
+        <tr>
+            <th>Storage location</th><td>{{item.storage}}</td>
+        </tr>
+        <tr>
+            <th>User</th><td>{{item.on_employee}}</td>
+        </tr>
+        <tr>
+            <th>Write off</th><td>{{item.write_off}}</td>
+        </tr>
+    </table>
+{% endblock content  %}

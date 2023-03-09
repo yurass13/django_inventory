@@ -1,0 +1,18 @@
+<table class='table_view'>
+
+    {% for field_title in field_titles%}
+    <th>{{field_title}}</th>
+    {% endfor %}
+
+    {% for item in items%}
+    {% comment %} For link to product card on tr tag. Need refactor for using dict.{% endcomment %}
+    {% comment %} {% if item %}onclick="location.href='/inventory/{{item}}'" type='button'{% endif %} {% endcomment %}
+        <tr>
+            {% for value in item%}
+                <td>{{value}}</td>
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    {% comment %} {{items}} {% endcomment %}
+
+</table>

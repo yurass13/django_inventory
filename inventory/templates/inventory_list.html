@@ -1,0 +1,15 @@
+{% extends 'bases/base.html' %}
+
+{% block title%}{{title}}{% endblock title%}
+{% block header%}{{title}}{% endblock header%}
+{% block content  %}
+    <div class='controls'>
+        <button onclick="location.href='/inventory?products=True';">Products avaliable</button>
+        <button>Avaliable by storages</button>
+    </div>
+    {% comment %} {% if by_products %}
+    {% include "bases/table_view.html" with fields=fields items=items %}
+    {% endif %} {% endcomment %}
+    {% include "bases/table_view.html" with field_titles=field_titles items=items fields=fields %}
+
+{% endblock content  %}
