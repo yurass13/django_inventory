@@ -20,10 +20,14 @@ from inventory import views
 inventory_patterns =[
     path('', views.InventoryView.as_view()),
     re_path(r'(?P<id>\d+)', views.ShowInventory.as_view()),
+    path('products/', views.ProductsAvaliableView.as_view()),
+    path('storages/', views.StorageContainsView.as_view()),
 ]
 
 urlpatterns = [
     path('', views.index, name='home'),
     path('inventory/', include(inventory_patterns)),
     path('admin/', admin.site.urls),
+
+    
 ]

@@ -1,0 +1,21 @@
+{% regroup items by Storage_location as storage_list %}
+{% for storage in storage_list %}
+    <table class= 'table_view'>
+        <thead>
+            <tr>
+                <th colspan="2">{{storage.grouper}}</th>
+            </tr>
+            <tr>
+                <th>Product name</th>
+                <th>Count</th>
+            </tr>
+        </thead>
+        {% regroup storage.list|dictsort:"Product_name.id" by Product_name as product_list %}
+            {% for item in product_list%}
+                <tr>
+                    <td>{{item.grouper}}</td>
+                    <td>{{item.list|length}}</td>
+                </tr> 
+            {% endfor %}
+    </table>
+{% endfor %}

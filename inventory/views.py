@@ -1,101 +1,115 @@
 from django.shortcuts import render
 from django.views.generic import ListView, DetailView
-from django.db.models import Count
+from django.db.models import Count, QuerySet
+
+from typing import Any, Dict
 
 from .utils import  ViewModelContextMixin
 
-from .models import Inventory
+from .models import Inventory, ProductPrototype
 
 def index(request):
     return render(request, 'bases/base.html',
-                  context={'title': 'Template', 'content':'<p>Some content</p>'})
+                  context={'title': 'Home', 'content':'<p>Some content</p>'})
 
 
 
 class InventoryView(ViewModelContextMixin, ListView):
-    # TODO Empty model page 
-    # FIXME object_list is not empty on context_object_name definition
-    # need check docs
+    # FIXME duplicate field in items
+    #   field_titles must be a dict.
+    #   on iter fields_titles from dict call it from items or ect.
+    # TODO pagination
+    # NOTE May be reserve another key for view with add 1:1 key to origin context items.
+
     model = Inventory
     template_name = 'inventory_list.html'
-    stored_context:dict[str, object] = {}
+    context_object_name = 'items'
+
+
 
     def get_context_data(self, **kwargs):
 
-        su_context = super().get_context_data(**kwargs)
-        mix_context = self.get_user_context()        
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Inventory'
+        
+        context['field_titles'] = [
+            'Inventory_ID',
+            'Product_name',
+            'Storage_location',
+            'User',
+            'Write_off'
+        ]
+        context['items'] = [
+            {
+                'Inventory_ID': item.id,
+                'Product_name': item.product_prototype,
+                'Storage_location': item.storage,
+                'User': item.on_employee if item.on_employee is not None else "",
+                'Write_off': item.write_off if item.write_off == True else "" 
+            }
+            for item in context['items'].order_by('storage')
+        ]
+        
+        return context
+        
+
+class ProductsAvaliableView(ListView):
+    model = Inventory
+    template_name = 'inventory_list.html'
+    context_object_name = 'items'
 
 
-        # FIXME refactor. Move to Mixin.
-        if self.request.GET.get("products", False):
-            self.set_product_context()
-            print("Products")
-        elif self.request.GET.get("storages", False):
-            print("Storages")
-            self.set_storage_context()
-        else:
-            print("Default")
-            self.set_default_context()
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'Products avaliable'
+        context['items'] = [
+            {
+                'product_id': item['product_prototype__pk'],
+                'Product':"{product_name} {product_model}".format(
+                    product_name = item['product_prototype__name'],
+                    product_model= (
+                        ''
+                        if item['product_prototype__model__name'] is None
+                        else item['product_prototype__model__name']
+                    )
+                ),
+                'Count':item['count']
+            }
+            for item in context['items']
+        ]
 
-        context = dict(
-            list(su_context.items()) +
-            list(mix_context.items()) +
-            list(self.stored_context.items())
-        )
-
-            
+        context['field_titles'] = ['Product', 'Count']
         return context
 
-    def set_product_context(self):
-        self.stored_context['field_titles'] = ['Product name', 'Now avaliable']
 
-        prod_uniq = self.model.objects.values_list(
-            "product_prototype__name",
-            "product_prototype__model__name"
-        ).distinct()
-
-        self.stored_context['items'] = []
-        for prod in prod_uniq:
-            count = self.model.objects.filter(
-                write_off=False,
-                on_employee=None,
-                product_prototype__name=prod[0],
-                product_prototype__model__name=prod[1]
-            ).aggregate(group=Count('id'))
-
-            if None not in prod:
-                group_name = ' '.join(prod)
-            else:
-                group_name = prod[0]
-
-            self.stored_context['items'].append([group_name, count['group']])
-
-
-    def set_storage_context(self):
-        # Try use regroup
-        pass
-
-
-    def set_default_context(self):
-        self.stored_context['field_titles'] = [
-                'Inventory ID',
-                'Product name',
-                'Storage location',
-                'User',
-                'Write off'
-            ]
-        # FIXME to refactoring.
-        self.stored_context['items'] = []
-        for row in self.model.objects.all():
-            self.stored_context['items'].append([
-                    row.id,
-                    row.product_prototype,
-                    row.storage,
-                    row.on_employee,
-                    row.write_off
-                ]
+    def get_queryset(self):
+        qs = self.model.objects.filter(
+            on_employee=None,
+            write_off=False
+        ).values(
+            'product_prototype__pk',
+            'product_prototype__name',
+            'product_prototype__model__name'
+            ).annotate(
+            count = Count('id')
             )
-            
+        return qs
+    
+
+class StorageContainsView(InventoryView):
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['title'] = 'On Storages'
+        return context
+
+
+    def get_queryset(self):
+        qs = super().get_queryset().filter(
+            on_employee=None,
+            write_off=False
+        )
+        return qs
+        
 
 
 class ShowInventory(ViewModelContextMixin, DetailView):

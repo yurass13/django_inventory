@@ -1,0 +1,17 @@
+<table class='table_view'>
+    <thead>
+    {% for field_title in field_titles%}
+    <th>{{field_title}}</th>
+    {% endfor %}
+    </thead>
+
+    <tbody>
+    {% for item in items%}
+        <tr {% if title == 'Inventory' %} onclick="location.href='/inventory/{{item.Inventory_ID}}'" type='button' {% endif %}>
+            {% for key, value in item.items%}
+                {% if key in field_titles%}<td>{{value}}</td>{% endif %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+    </tbody>    
+</table>

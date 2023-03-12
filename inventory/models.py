@@ -71,14 +71,10 @@ class Storage(models.Model):
 
 # ______________________________Transactions___________________________________
 class Inventory(models.Model):
-    # FIXME try add into the ItemToDictMixin overloading by user_context
-    # for getting choosed fields from FK.
-    # After that, inheir it and use in context with refactoring templates
-    # for reusing templates.
-
     product_prototype:models.ForeignKey = models.ForeignKey(ProductPrototype, on_delete=models.PROTECT)
     storage:models.ForeignKey = models.ForeignKey(Storage, on_delete=models.PROTECT)
     on_employee:models.ForeignKey = models.ForeignKey(Employee, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None)
+    # NOTE in relese it'll be timestamp or FK to document.
     write_off:models.BooleanField = models.BooleanField(blank=True, default=False)
 
 
