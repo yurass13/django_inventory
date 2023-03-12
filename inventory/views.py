@@ -18,7 +18,7 @@ class InventoryView(ViewModelContextMixin, ListView):
     # need check docs
     model = Inventory
     template_name = 'inventory_list.html'
-    stored_context = {}
+    stored_context:dict[str, object] = {}
 
     def get_context_data(self, **kwargs):
 
