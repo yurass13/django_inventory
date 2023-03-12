@@ -3,7 +3,7 @@ from django.db import models
 # ________________________________Products_____________________________________
 class Country(models.Model):
 
-    name = models.CharField(max_length=50)
+    name:models.CharField = models.CharField(max_length=50)
 
     def __str__(self) -> str:
         return self.name
@@ -11,8 +11,8 @@ class Country(models.Model):
 
 class Supplier(models.Model):
 
-    name = models.CharField(max_length=50)
-    contact_info = models.CharField(max_length=50)
+    name:models.CharField = models.CharField(max_length=50)
+    contact_info:models.CharField = models.CharField(max_length=50)
 
     def __str__(self) -> str:
         return self.name
@@ -20,8 +20,8 @@ class Supplier(models.Model):
 
 class ProductModel(models.Model):
 
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=200)
+    name:models.CharField = models.CharField(max_length=50)
+    description:models.CharField = models.CharField(max_length=200)
 
     def __str__(self) -> str:
         if self.name is not None:
@@ -32,11 +32,11 @@ class ProductModel(models.Model):
 
 class ProductPrototype(models.Model):
 
-    name = models.CharField(max_length=50)
-    description = models.CharField(max_length=200)
-    supplier = models.ForeignKey(Supplier, on_delete=models.PROTECT)
-    country = models.ForeignKey(Country, on_delete=models.PROTECT)
-    model = models.ForeignKey(ProductModel, on_delete=models.SET_NULL, blank=True, null=True)
+    name:models.CharField = models.CharField(max_length=50)
+    description:models.CharField = models.CharField(max_length=200)
+    supplier:models.ForeignKey = models.ForeignKey(Supplier, on_delete=models.PROTECT)
+    country:models.ForeignKey = models.ForeignKey(Country, on_delete=models.PROTECT)
+    model:models.ForeignKey = models.ForeignKey(ProductModel, on_delete=models.SET_NULL, blank=True, null=True)
 
     def __str__(self) -> str:
 
@@ -51,7 +51,7 @@ class ProductPrototype(models.Model):
 # ______________________________Organisation___________________________________
 class Employee(models.Model):
 
-    full_name = models.CharField(max_length=200)
+    full_name:models.CharField = models.CharField(max_length=200)
     ...
 
     def __str__(self) -> str:
@@ -63,7 +63,7 @@ class Employee(models.Model):
 
 class Storage(models.Model):
 
-    location = models.CharField(max_length=200)
+    location:models.CharField = models.CharField(max_length=200)
     ...
 
     def __str__(self) -> str:
@@ -76,10 +76,10 @@ class Inventory(models.Model):
     # After that, inheir it and use in context with refactoring templates
     # for reusing templates.
 
-    product_prototype = models.ForeignKey(ProductPrototype, on_delete=models.PROTECT)
-    storage = models.ForeignKey(Storage, on_delete=models.PROTECT)
-    on_employee = models.ForeignKey(Employee, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None)
-    write_off = models.BooleanField(blank=True, default=False)
+    product_prototype:models.ForeignKey = models.ForeignKey(ProductPrototype, on_delete=models.PROTECT)
+    storage:models.ForeignKey = models.ForeignKey(Storage, on_delete=models.PROTECT)
+    on_employee:models.ForeignKey = models.ForeignKey(Employee, on_delete=models.SET_DEFAULT, blank=True, null=True, default=None)
+    write_off:models.BooleanField = models.BooleanField(blank=True, default=False)
 
 
     def __str__(self) -> str:
